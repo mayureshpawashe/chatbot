@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-2 Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #chatbox {
+            width: 50%;
+            margin: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            background: #f9f9f9;
+        }
+        #user-input {
+            width: 60%;
+            padding: 10px;
+        }
+        #send-btn {
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>GPT-2 Chatbot</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="user-input" placeholder="Type a message...">
+    <button id="send-btn">Send</button>
+
+    <script>
+        document.getElementById("send-btn").addEventListener("click", function () {
+            let userMessage = document.getElementById("user-input").value;
+            let chatbox = document.getElementById("chatbox");
+
+            if (userMessage.trim() === "") return;
+
+            chatbox.innerHTML += `<p><b>You:</b> ${userMessage}</p>`;
+            document.getElementById("user-input").value = "";
+
+            fetch("http://127.0.0.1:5000/chat", {  // Ensure correct API URL
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatbox.innerHTML += `<p><b>Chatbot:</b> ${data.response}</p>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
